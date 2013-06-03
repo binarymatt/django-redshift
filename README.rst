@@ -1,7 +1,7 @@
 django-redshift
 ==================
 
-Amazon Redshift dialect for sqlalchemy.
+Amazon Redshift backend for Django.
 
 Requirements
 -------------
