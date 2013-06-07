@@ -115,7 +115,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         #if autocommit:
         #    level = psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT
         #else:
-        level = psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT
+        level = psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE
         self._set_isolation_level(level)
         self.ops = DatabaseOperations(self)
         self.client = DatabaseClient(self)
@@ -194,7 +194,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
                 if conn_tz != tz:
                     # Set the time zone in autocommit mode (see #17062)
                     self.connection.set_isolation_level(
-                            psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+                            psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
                     self.connection.cursor().execute(
                             self.ops.set_time_zone_sql(), [tz])
             self.connection.set_isolation_level(self.isolation_level)
@@ -210,7 +210,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         the same transaction is visible across all the queries.
         """
         if self.features.uses_autocommit and managed and not self.isolation_level:
-            self._set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+            self._set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
 
     def _leave_transaction_management(self, managed):
         """
@@ -218,7 +218,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         leaving transaction management.
         """
         if self.features.uses_autocommit and not managed and self.isolation_level:
-            self._set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+            self._set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
 
     def _set_isolation_level(self, level):
         """
